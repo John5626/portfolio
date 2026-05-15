@@ -1,0 +1,196 @@
+{
+  "name": "João Victor Domingos e Souza",
+  "display_name": "João Victor",
+  "title": "Desenvolvedor PHP Jr (Laravel) | APIs REST | MySQL/SQL | Git | Vue.js | Remoto",
+  "short_title": "Desenvolvedor FullStack",
+  "email": "domingos192192@gmail.com",
+  "phone_e164": "+5532999943842",
+  "phone_display": "(32) 99994-3842",
+  "location": "Leopoldina, Minas Gerais, Brazil (Aberto a Remoto)",
+  "linkedin_text": "linkedin.com/in/joaovictorsouza-ecomp",
+  "linkedin_url": "https://www.linkedin.com/in/joaovictorsouza-ecomp",
+  "github_text": "github.com/john5626",
+  "github_url": "https://github.com/John5626",
+  "website_text": "lattes.cnpq.br/0526561758145021",
+  "website_url": "http://lattes.cnpq.br/0526561758145021",
+  "summary": "Sou Desenvolvedor PHP, com foco em Laravel, APIs REST e bancos de dados MySQL, atuando no desenvolvimento de sistemas web e backends estruturados. Atuo atualmente no desenvolvimento do Adequa (Projeto de Iniciação Científica) com funcionalidade de verificação de não conformidades em relação à LGPD, versionamento com Git e integração com Vue.js. Busco vaga remota como Junior PHP Developer para evoluir em boas práticas, código limpo e entrega de features end-to-end (requisitos → implementação → validação).",
+  "skills": [
+    {
+      "group": "Principais competências",
+      "items": [
+        "PHP",
+        "Laravel",
+        "APIs REST",
+        "MySQL",
+        "Vue.js"
+      ]
+    },
+    {
+      "group": "Backend",
+      "items": [
+        "PHP",
+        "Laravel",
+        "APIs REST"
+      ]
+    },
+    {
+      "group": "Banco de dados",
+      "items": [
+        "MySQL",
+        "SQL",
+        "MariaDB"
+      ]
+    },
+    {
+      "group": "Frontend",
+      "items": [
+        "Vue.js"
+      ]
+    },
+    {
+      "group": "Ferramentas",
+      "items": [
+        "Git"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "role": "Desenvolvedor PHP (Projeto Acadêmico) — Adequa",
+      "company": "CEFET-MG (Campus Leopoldina)",
+      "date": "fevereiro de 2024 — Atual",
+      "location": "Leopoldina, MG",
+      "bullets": [
+        "Desenvolvi endpoints de APIs REST em Laravel para suportar regras de verificação de conformidade LGPD, garantindo validações consistentes no backend.",
+        "Modelei e evoluí o banco relacional (MySQL/SQL) para suportar novas entidades do sistema, mantendo integridade e consultas eficientes.",
+        "Integrei backend Laravel com frontend em Vue.js para fluxos de verificação e uso do sistema.",
+        "Colaborei via Git com equipe acadêmica, organizando entregas e revisões de código."
+      ]
+    },
+    {
+      "role": "Petiano",
+      "company": "Centro Federal de Educação Tecnológica de Minas Gerais",
+      "date": "março de 2024 — Atual",
+      "location": "Leopoldina, Minas Gerais, Brazil",
+      "bullets": [
+        "Membro do PET.COMP (Engenharia de Computação), colaborando em ações de ensino, pesquisa e extensão.",
+        "Apoio na organização de atividades, produção de materiais e execução de iniciativas do programa."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "title": "Bacharelado, Engenharia de Computação",
+      "subtitle": "Centro Federal de Educação Tecnológica de Minas Gerais",
+      "date": "julho de 2022 — dezembro de 2027"
+    }
+  ],
+  "languages": [
+    {
+      "name": "Português",
+      "note": "Nativo"
+    },
+    {
+      "name": "Inglês",
+      "note": "Leitura Técnica, Escrita Básica"
+    }
+  ],
+  "projects": [
+    {
+      "title": "Adequa — Verificação LGPD",
+      "type": "Full Stack",
+      "stack": "PHP, Laravel, APIs REST, MySQL, Vue.js",
+      "description": "Sistema acadêmico para verificação de não conformidades em relação à LGPD, com backend em Laravel, regras de validação no servidor e integração com frontend Vue.js.",
+      "tags": [
+        "PHP",
+        "Laravel",
+        "APIs REST",
+        "MySQL",
+        "Vue.js"
+      ],
+      "icon": "PHP",
+      "icon_class": "php-icon",
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/John5626"
+        },
+        {
+          "label": "LinkedIn",
+          "url": "https://www.linkedin.com/in/joaovictorsouza-ecomp"
+        }
+      ]
+    },
+    {
+      "title": "PET.COMP — Ensino, Pesquisa e Extensão",
+      "type": "Acadêmico",
+      "stack": "CEFET-MG, Pesquisa, Extensão, Materiais",
+      "description": "Participação em iniciativas acadêmicas do PET.COMP, contribuindo na organização de atividades, produção de materiais e execução de ações voltadas à comunidade acadêmica.",
+      "tags": [
+        "CEFET-MG",
+        "Pesquisa",
+        "Extensão",
+        "Materiais"
+      ],
+      "icon": "PET",
+      "icon_class": "doc-icon",
+      "links": [
+        {
+          "label": "Lattes",
+          "url": "http://lattes.cnpq.br/0526561758145021"
+        },
+        {
+          "label": "LinkedIn",
+          "url": "https://www.linkedin.com/in/joaovictorsouza-ecomp"
+        }
+      ]
+    },
+    {
+      "title": "Currículo ATS em HTML/PDF",
+      "type": "Ferramenta",
+      "stack": "HTML, CSS, JavaScript, JSON, Playwright",
+      "description": "Currículo estruturado em JSON e renderizado em HTML limpo, com exportação para PDF clicável e formato amigável para sistemas ATS.",
+      "tags": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "JSON",
+        "Playwright"
+      ],
+      "icon": "CV",
+      "icon_class": "js-icon",
+      "links": [
+        {
+          "label": "HTML",
+          "url": "dist/cv.html"
+        },
+        {
+          "label": "PDF",
+          "url": "dist/curriculo_JSOUZA.pdf"
+        }
+      ]
+    }
+  ],
+  "portfolio": {
+    "terminal_user": "john",
+    "logo_name": "John",
+    "command": "php portfolio.php",
+    "focus": [
+      "Laravel",
+      "APIs REST",
+      "MySQL"
+    ],
+    "status": "Aberto a oportunidades remotas",
+    "profile_initials": "JV",
+    "profile_label": "// profile.pending",
+    "resume_pdf_path": "dist/curriculo_JSOUZA.pdf",
+    "resume_html_path": "dist/cv.html",
+    "resume_download_name": "Joao_Victor_Curriculo.pdf",
+    "resume_output_pdf": "curriculo_JSOUZA.pdf",
+    "copyright_year": "2026",
+    "footer_stack": [
+      "Typescript",
+      "Vue3.js"
+    ]
+  }
+}

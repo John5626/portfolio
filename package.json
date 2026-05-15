@@ -1,0 +1,23 @@
+{
+  "name": "joao-portfolio-cv",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "api": "node scripts/dev-server.mjs",
+    "build": "vite build && npm run build:cv && node scripts/prepare-site.mjs",
+    "build:cv": "node scripts/render.mjs",
+    "pdf": "node scripts/export-pdf.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "playwright": "^1.50.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@types/node": "^25.8.0"
+  }
+}

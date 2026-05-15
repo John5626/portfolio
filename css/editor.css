@@ -1,0 +1,239 @@
+.editor-page {
+  min-height: 100vh;
+}
+
+.editor-shell {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  gap: 32px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 84px 24px 48px;
+}
+
+.editor-sidebar {
+  position: sticky;
+  top: 76px;
+  align-self: start;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 20px;
+}
+
+.editor-sidebar h1 {
+  font-size: 18px;
+  line-height: 1.35;
+  margin-bottom: 20px;
+}
+
+.editor-tabs {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--border);
+  background: var(--border);
+  margin-bottom: 18px;
+}
+
+.editor-tabs a {
+  display: block;
+  background: var(--card);
+  color: var(--text2);
+  text-decoration: none;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+.editor-tabs a:hover {
+  background: var(--bg2);
+  color: var(--text);
+}
+
+.editor-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.editor-form {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+
+.editor-section {
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 24px;
+  scroll-margin-top: 72px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-heading .sec-title {
+  margin-bottom: 24px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.form-grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--text2);
+  font-size: 11px;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid var(--border2);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--accent);
+}
+
+button {
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  padding: 9px 12px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+button:hover {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+.repeat-list {
+  display: grid;
+  gap: 12px;
+}
+
+.repeat-item {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: 16px;
+}
+
+.repeat-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.repeat-title strong {
+  font-size: 12px;
+}
+
+.status {
+  min-height: 90px;
+  max-height: 220px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text2);
+  padding: 12px;
+  white-space: pre-wrap;
+  font-size: 11px;
+}
+
+.restricted-shell {
+  display: block;
+  max-width: 760px;
+}
+
+.restricted-card {
+  margin: 0 auto;
+}
+
+.restricted-card h1 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.restricted-card p {
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.restricted-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 0 14px;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.restricted-link:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+
+@media (max-width: 900px) {
+  .editor-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-sidebar {
+    position: static;
+  }
+
+  .editor-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid.two {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .editor-shell {
+    padding-inline: 16px;
+  }
+
+  .editor-section {
+    padding: 18px;
+  }
+
+  .section-heading {
+    display: grid;
+  }
+}
