@@ -122,8 +122,18 @@ async function handleApi(req, res, pathname) {
     }
 
     if (pathname === "/api/pdf" && req.method === "POST") {
-      const result = await runNodeScript("export-pdf.mjs");
-      sendJson(res, result.code === 0 ? 200 : 500, result);
+      const pdfResult = await runNodeScript("export-pdf.mjs");
+      if (pdfResult.code !== 0) {
+        sendJson(res, 500, pdfResult);
+        return true;
+      }
+
+      const syncResult = await runNodeScript("sync-pdf.mjs");
+      sendJson(res, syncResult.code === 0 ? 200 : 500, {
+        code: syncResult.code,
+        stdout: [pdfResult.stdout, syncResult.stdout].filter(Boolean).join("\n"),
+        stderr: [pdfResult.stderr, syncResult.stderr].filter(Boolean).join("\n"),
+      });
       return true;
     }
 

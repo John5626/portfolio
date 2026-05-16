@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "api": "node scripts/dev-server.mjs",
-    "build": "vite build && npm run build:cv && npm run pdf && node scripts/prepare-site.mjs",
+    "build": "vite build && npm run build:cv && node scripts/prepare-site.mjs",
+    "build:with-pdf": "vite build && npm run build:cv && npm run pdf && node scripts/prepare-site.mjs",
     "build:cv": "node scripts/render.mjs",
-    "pdf": "node scripts/export-pdf.mjs",
+    "pdf:install": "npx playwright install chromium",
+    "pdf": "node scripts/export-pdf.mjs && node scripts/sync-pdf.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

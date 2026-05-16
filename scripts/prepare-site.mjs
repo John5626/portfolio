@@ -21,7 +21,8 @@ async function copyRequired(source, target, label) {
 
 const profile = JSON.parse(await fs.readFile(profileSource, "utf8"));
 const pdfName = profile.portfolio?.resume_output_pdf || path.basename(profile.portfolio?.resume_pdf_path || "curriculo.pdf");
+const publicPdfSource = path.join(root, "public", "dist", pdfName);
 
 await copyRequired(profileSource, profileTarget, "profile.json");
 await copyRequired(path.join(root, "dist", "cv.html"), path.join(siteDir, "dist", "cv.html"), "cv.html");
-await copyRequired(path.join(root, "dist", pdfName), path.join(siteDir, "dist", pdfName), pdfName);
+await copyRequired(publicPdfSource, path.join(siteDir, "dist", pdfName), pdfName);
