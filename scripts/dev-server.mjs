@@ -9,6 +9,7 @@ const port = Number(process.argv[2] || process.env.PORT || 5500);
 const host = process.env.HOST || "127.0.0.1";
 const profilePath = path.join(root, "data", "profile.json");
 const editorEnabled = process.env.EDITOR_ENABLED === "true" || process.env.VITE_ENABLE_EDITOR === "true";
+const maxBodyBytes = 8 * 1024 * 1024;
 
 const types = {
   ".css": "text/css; charset=utf-8",
@@ -19,6 +20,7 @@ const types = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
   ".svg": "image/svg+xml",
 };
 
@@ -49,7 +51,7 @@ function readBody(req) {
 
     req.on("data", (chunk) => {
       body += chunk;
-      if (body.length > 1024 * 1024) {
+      if (body.length > maxBodyBytes) {
         req.destroy();
         reject(new Error("Payload muito grande"));
       }
@@ -91,6 +93,7 @@ async function handleApi(req, res, pathname) {
       (pathname === "/api/profile" && req.method === "PUT")
       || (pathname === "/api/build" && req.method === "POST")
       || (pathname === "/api/pdf" && req.method === "POST")
+      || (pathname === "/api/upload-profile-image" && req.method === "POST")
     )) {
       sendJson(res, 403, { error: "Editor desabilitado neste ambiente." });
       return true;
@@ -112,6 +115,38 @@ async function handleApi(req, res, pathname) {
       const next = `${JSON.stringify(data, null, 2)}\n`;
       await fs.promises.writeFile(profilePath, next, "utf8");
       sendJson(res, 200, { ok: true, file: "data/profile.json" });
+      return true;
+    }
+
+    if (pathname === "/api/upload-profile-image" && req.method === "POST") {
+      const data = await readJsonBody(req);
+      const dataUrl = String(data?.dataUrl || "");
+      const match = dataUrl.match(/^data:(image\/(?:png|jpeg|webp));base64,([a-zA-Z0-9+/=]+)$/);
+
+      if (!match) {
+        sendJson(res, 400, { error: "Imagem inválida. Use PNG, JPG ou WebP." });
+        return true;
+      }
+
+      const extensionByMime = {
+        "image/png": "png",
+        "image/jpeg": "jpg",
+        "image/webp": "webp",
+      };
+      const extension = extensionByMime[match[1]];
+      const buffer = Buffer.from(match[2], "base64");
+
+      if (!buffer.length || buffer.length > 4 * 1024 * 1024) {
+        sendJson(res, 400, { error: "A imagem deve ter até 4 MB." });
+        return true;
+      }
+
+      const uploadDir = path.join(root, "public", "uploads");
+      const fileName = `profile-${Date.now()}.${extension}`;
+      const filePath = path.join(uploadDir, fileName);
+      await fs.promises.mkdir(uploadDir, { recursive: true });
+      await fs.promises.writeFile(filePath, buffer);
+      sendJson(res, 200, { ok: true, path: `/uploads/${fileName}` });
       return true;
     }
 

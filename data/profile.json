@@ -1,7 +1,7 @@
 {
   "name": "João Victor Domingos e Souza",
   "display_name": "João Victor",
-  "title": "Desenvolvedor PHP Jr (Laravel) | APIs REST | MySQL/SQL | Git | Vue.js | Remoto",
+  "title": "Desenvolvedor FullStack | APIs REST | MySQL/SQL | Git | Vue.js | Remoto",
   "short_title": "Desenvolvedor FullStack",
   "email": "domingos192192@gmail.com",
   "phone_e164": "+5532999943842",
@@ -13,7 +13,7 @@
   "github_url": "https://github.com/John5626",
   "website_text": "lattes.cnpq.br/0526561758145021",
   "website_url": "http://lattes.cnpq.br/0526561758145021",
-  "summary": "Sou Desenvolvedor PHP, com foco em Laravel, APIs REST e bancos de dados MySQL, atuando no desenvolvimento de sistemas web e backends estruturados. Atuo atualmente no desenvolvimento do Adequa (Projeto de Iniciação Científica) com funcionalidade de verificação de não conformidades em relação à LGPD, versionamento com Git e integração com Vue.js. Busco vaga remota como Junior PHP Developer para evoluir em boas práticas, código limpo e entrega de features end-to-end (requisitos → implementação → validação).",
+  "summary": "Sou discente em Engenharia de Computação e desenvolvedor PHP, com foco em Laravel, APIs REST e bancos de dados MySQL, atuando no desenvolvimento de sistemas web e backends estruturados. Atuo atualmente no desenvolvimento do Adequa (Projeto de Iniciação Científica) com funcionalide de verificação de não conformidades em relação à LGPD, versionamento com Git e integração com Vue.js.",
   "skills": [
     {
       "group": "Principais competências",
@@ -30,7 +30,9 @@
       "items": [
         "PHP",
         "Laravel",
-        "APIs REST"
+        "APIs REST",
+        "Java",
+        "Python"
       ]
     },
     {
@@ -38,27 +40,30 @@
       "items": [
         "MySQL",
         "SQL",
-        "MariaDB"
+        "MariaDB",
+        "PostGree"
       ]
     },
     {
       "group": "Frontend",
       "items": [
-        "Vue.js"
+        "Vue.js",
+        "Tailwind"
       ]
     },
     {
       "group": "Ferramentas",
       "items": [
-        "Git"
+        "Git",
+        "GitHub"
       ]
     }
   ],
   "experience": [
     {
-      "role": "Desenvolvedor PHP (Projeto Acadêmico) — Adequa",
+      "role": "Desenvolvedor FullStack (Projeto Acadêmico) — Adequa",
       "company": "CEFET-MG (Campus Leopoldina)",
-      "date": "fevereiro de 2024 — Atual",
+      "date": "fevereiro de 2024 — fevereiro de 2026",
       "location": "Leopoldina, MG",
       "bullets": [
         "Desenvolvi endpoints de APIs REST em Laravel para suportar regras de verificação de conformidade LGPD, garantindo validações consistentes no backend.",
@@ -75,6 +80,24 @@
       "bullets": [
         "Membro do PET.COMP (Engenharia de Computação), colaborando em ações de ensino, pesquisa e extensão.",
         "Apoio na organização de atividades, produção de materiais e execução de iniciativas do programa."
+      ]
+    },
+    {
+      "role": "Desenvolvedor PHP (Projeto Acadêmico) — SportsPerformance",
+      "company": "Centro Federal de Educação Tecnológica de Minas Gerais",
+      "date": "março de 2026 — Atual",
+      "location": "Leopoldina, Minas Gerais, Brazil",
+      "bullets": [
+        "Desenvolvimento de um backend em Laravel para a plataforma SportsPerfomance (Sistema de gestão de treinos criado no contexto da disciplina de Engenharia de Software). O projeto foi preparado como um monólito modular API-first, com foco em evolução por domínios de negócio, isolamento de responsabilidades."
+      ]
+    },
+    {
+      "role": "Desenvolvedor FullStack — Auth+",
+      "company": "Centro Federal de Educação Tecnológica de Minas Gerais",
+      "date": "março de 2026 — Atual",
+      "location": "Leopoldina, Minas Gerais, Brazil",
+      "bullets": [
+        "Desenvolvimento de um MVP para gerenciamento de autenticação em dois fatores baseada em TOTP, com foco em segurança, controle de acesso e auditoria. O projeto utiliza Flutter no frontend, Kotlin no backend e banco de dados relacional."
       ]
     }
   ],
@@ -97,10 +120,10 @@
   ],
   "projects": [
     {
-      "title": "Adequa — Verificação LGPD",
+      "title": "Adequa — Verificação LGPD e Geração de Políticas de Privacidade e Termos de Uso para Softwares",
       "type": "Full Stack",
       "stack": "PHP, Laravel, APIs REST, MySQL, Vue.js",
-      "description": "Sistema acadêmico para verificação de não conformidades em relação à LGPD, com backend em Laravel, regras de validação no servidor e integração com frontend Vue.js.",
+      "description": "Sistema acadêmico para verificação de não conformidades em relação à LGPD e Geração de Políticas de Privacidade e Termos de Uso para Softwares, com backend em Laravel, regras de validação no servidor e integração com frontend Vue.js.",
       "tags": [
         "PHP",
         "Laravel",
@@ -112,12 +135,8 @@
       "icon_class": "php-icon",
       "links": [
         {
-          "label": "GitHub",
-          "url": "https://github.com/John5626"
-        },
-        {
-          "label": "LinkedIn",
-          "url": "https://www.linkedin.com/in/joaovictorsouza-ecomp"
+          "label": "Site",
+          "url": "https://adequa.linceonline.com.br"
         }
       ]
     },
@@ -142,11 +161,15 @@
         {
           "label": "LinkedIn",
           "url": "https://www.linkedin.com/in/joaovictorsouza-ecomp"
+        },
+        {
+          "label": "Site",
+          "url": "https://www.petcomp.cefetmg.br/"
         }
       ]
     },
     {
-      "title": "Currículo ATS em HTML/PDF",
+      "title": "Portfolio + Currículo ATS",
       "type": "Ferramenta",
       "stack": "HTML, CSS, JavaScript, JSON, Playwright",
       "description": "Currículo estruturado em JSON e renderizado em HTML limpo, com exportação para PDF clicável e formato amigável para sistemas ATS.",
@@ -161,12 +184,62 @@
       "icon_class": "js-icon",
       "links": [
         {
-          "label": "HTML",
-          "url": "dist/cv.html"
-        },
+          "label": "GitHub",
+          "url": "https://github.com/John5626/portfolio"
+        }
+      ]
+    },
+    {
+      "title": "Agenda.dev",
+      "type": "Full Stack",
+      "stack": "Svelte, .NET, MongoDB, Docker",
+      "description": "Aplicação full-stack de agenda semanal inspirada no Google Calendar, com frontend em SvelteKit, API em .NET e persistência em MongoDB.",
+      "tags": [
+        "Svelte",
+        ".NET",
+        "MongoDB",
+        "Docker"
+      ],
+      "icon": "Agenda",
+      "icon_class": "js-icon",
+      "links": [
         {
-          "label": "PDF",
-          "url": "dist/curriculo_JSOUZA.pdf"
+          "label": "GitHub",
+          "url": "https://github.com/John5626/Agenda.dev"
+        }
+      ]
+    },
+    {
+      "title": "Analisar léxico",
+      "type": "Acadêmico",
+      "stack": "Python",
+      "description": "Este projeto tem como objetivo implementar um analisador léxico (lexer) em Python 3, capaz de ler um arquivo e produzir uma sequência de tokens válidos.",
+      "tags": [
+        "Python"
+      ],
+      "icon": "lex.py",
+      "icon_class": "js-icon",
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/John5626/LFA_TPI_2025_1"
+        }
+      ]
+    },
+    {
+      "title": "ArithUDP",
+      "type": "Acadêmico",
+      "stack": "Java",
+      "description": "Desenvolvimento do trabalho de Redes de Computadores que consiste na implementação em Java de um cliente e servidor que se comunicam por meio de mensagens UDP para realizar operações atitméticas.",
+      "tags": [
+        "Java"
+      ],
+      "icon": "UDP",
+      "icon_class": "js-icon",
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/John5626/RComp-ArithUDP"
         }
       ]
     }
@@ -178,11 +251,13 @@
     "focus": [
       "Laravel",
       "APIs REST",
-      "MySQL"
+      "Vue.js"
     ],
     "status": "Aberto a oportunidades remotas",
     "profile_initials": "JV",
-    "profile_label": "// profile.pending",
+    "profile_label": "// profile.show",
+    "profile_image_path": "/uploads/profile-1778908481770.jpg",
+    "profile_image_alt": "João Victor Domingos e Souza",
     "resume_pdf_path": "dist/curriculo_JSOUZA.pdf",
     "resume_html_path": "dist/cv.html",
     "resume_download_name": "Joao_Victor_Curriculo.pdf",
@@ -191,6 +266,21 @@
     "footer_stack": [
       "Typescript",
       "Vue3.js"
-    ]
+    ],
+    "skill_levels": {
+      "php": "Avançado",
+      "laravel": "Avançado",
+      "apis rest": "Avançado",
+      "mysql": "Intermediário",
+      "vue.js": "Intermediário",
+      "java": "Intermediário",
+      "python": "Intermediário",
+      "sql": "Intermediário",
+      "mariadb": "Intermediário",
+      "postgree": "Conhecimento",
+      "tailwind": "Conhecimento",
+      "git": "Conhecimento",
+      "github": "Conhecimento"
+    }
   }
 }

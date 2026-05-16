@@ -382,6 +382,7 @@ h2.sec-title {
 }
 
 h1.main-title {
+  min-height: 2.1em;
   margin-bottom: 22px;
   color: var(--text);
   font-size: 56px;
@@ -517,7 +518,7 @@ h1.main-title {
   background: color-mix(in srgb, var(--card-solid) 82%, transparent);
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
-  animation: fadeInUp 0.85s ease 0.1s both;
+  animation: fadeInUp 0.55s ease both;
 }
 
 .console-top {
@@ -703,6 +704,8 @@ h1.main-title {
   inset: 0;
   background: linear-gradient(180deg, transparent, var(--ring), transparent);
   animation: profileScan 3.4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
 }
 
 @keyframes profileScan {
@@ -715,6 +718,8 @@ h1.main-title {
 }
 
 .profile-photo {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
@@ -723,6 +728,7 @@ h1.main-title {
 
 .profile-initials {
   position: relative;
+  z-index: 1;
   color: var(--accent2);
   font-size: 42px;
   font-weight: 900;
@@ -790,9 +796,18 @@ h1.main-title {
   height: 46px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--bg2);
+  background: #101923;
   font-size: 12px;
   font-weight: 800;
+}
+
+.brand-logo {
+  display: block;
+  width: 28px;
+  height: 28px;
+  background: var(--text);
+  mask: var(--brand-logo) center / contain no-repeat;
+  -webkit-mask: var(--brand-logo) center / contain no-repeat;
 }
 
 .stack-icon.node { color: #339933; }
@@ -806,9 +821,11 @@ h1.main-title {
 .stack-icon.prisma { color: #5a67d8; }
 .stack-icon.docker { color: #2496ed; }
 .stack-icon.git { color: #f05033; }
+.stack-icon.github { color: #181717; }
 .stack-icon.rest { color: var(--accent3); }
 .stack-icon.sql { color: #b7791f; }
 .stack-icon.vue { color: #42b883; }
+.stack-icon.tailwind { color: #06b6d4; }
 .stack-icon.n8n { color: #e64c3c; }
 .stack-icon.express { color: var(--text); }
 .stack-icon.ai { color: #7c3aed; }
@@ -1106,9 +1123,14 @@ h1.main-title {
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--accent2);
-  background: var(--bg2);
+  background: #101923;
   font-size: 16px;
   font-weight: 900;
+}
+
+.contact-icon .brand-logo {
+  width: 23px;
+  height: 23px;
 }
 
 /* =============================================
@@ -1165,6 +1187,14 @@ footer {
 
   .two-col {
     grid-template-columns: 1fr;
+  }
+
+  .profile-aside {
+    order: -1;
+  }
+
+  .bio {
+    order: 1;
   }
 
   .profile-frame,

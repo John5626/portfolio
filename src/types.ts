@@ -47,6 +47,9 @@ export type PortfolioSettings = {
   status: string;
   profile_initials: string;
   profile_label: string;
+  profile_image_path?: string;
+  profile_image_alt?: string;
+  skill_levels: Record<string, string>;
   resume_pdf_path: string;
   resume_html_path: string;
   resume_download_name: string;

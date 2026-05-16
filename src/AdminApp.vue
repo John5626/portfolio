@@ -1,11 +1,24 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { editorEnabled } from "./editorAccess";
-import type { Profile, Project } from "./types";
+import type { Profile, Project, SkillGroup } from "./types";
 
 const profile = ref<Profile | null>(null);
 const status = ref("Carregando data/profile.json...");
 const isSaving = ref(false);
+
+const defaultSkillLevels: Record<string, string> = {
+  php: "Intermediário",
+  laravel: "Intermediário",
+  "apis rest": "Iniciante",
+  "api rest": "Iniciante",
+  mysql: "Intermediário",
+  sql: "Intermediário",
+  mariadb: "Iniciante",
+  "vue.js": "Iniciante",
+  "vue.js 3": "Iniciante",
+  git: "Iniciante",
+};
 
 function toArray<T>(value: T[] | null | undefined): T[] {
   return Array.isArray(value) ? value : [];
@@ -18,6 +31,52 @@ function splitComma(value: string): string[] {
 function splitLines(value: string): string[] {
   return value.split("\n").map((item) => item.trim()).filter(Boolean);
 }
+
+function skillLabel(value: string): string {
+  return String(value).replace(/\s*\([^)]*\)/g, "").trim();
+}
+
+function skillLevelKey(value: string): string {
+  return skillLabel(value).toLowerCase();
+}
+
+function defaultSkillLevel(value: string): string {
+  return defaultSkillLevels[skillLevelKey(value)] || "Conhecimento";
+}
+
+function ensureSkillLevels(profileData = profile.value) {
+  if (!profileData) return;
+  profileData.portfolio.skill_levels ||= {};
+
+  toArray(profileData.skills).forEach((group) => {
+    toArray(group.items).forEach((item) => {
+      const label = skillLabel(item);
+      const key = skillLevelKey(label);
+      if (key && !profileData.portfolio.skill_levels[key]) {
+        profileData.portfolio.skill_levels[key] = defaultSkillLevel(label);
+      }
+    });
+  });
+}
+
+const skillLevelRows = computed(() => {
+  if (!profile.value) return [];
+
+  const seen = new Set<string>();
+  const rows: Array<{ key: string; name: string }> = [];
+
+  toArray(profile.value.skills).forEach((group) => {
+    toArray(group.items).forEach((item) => {
+      const name = skillLabel(item);
+      const key = skillLevelKey(name);
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      rows.push({ key, name });
+    });
+  });
+
+  return rows;
+});
 
 function linkText(project: Project): string {
   return toArray(project.links).map((link) => `${link.label || ""} | ${link.url || ""}`).join("\n");
@@ -33,6 +92,15 @@ function setLinks(project: Project, value: string) {
   }).filter((link) => link.label || link.url);
 }
 
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(String(reader.result || "")));
+    reader.addEventListener("error", () => reject(reader.error || new Error("Falha ao ler arquivo")));
+    reader.readAsDataURL(file);
+  });
+}
+
 async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(path, {
     headers: { "Content-Type": "application/json", ...(options.headers || {}) },
@@ -45,9 +113,61 @@ async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
   return data;
 }
 
+async function uploadProfileImage(event: Event) {
+  if (!profile.value) return;
+
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+    status.value = "Use uma imagem PNG, JPG ou WebP.";
+    input.value = "";
+    return;
+  }
+
+  if (file.size > 4 * 1024 * 1024) {
+    status.value = "A imagem deve ter até 4 MB.";
+    input.value = "";
+    return;
+  }
+
+  isSaving.value = true;
+  status.value = "Enviando imagem...";
+  try {
+    const dataUrl = await readFileAsDataUrl(file);
+    const result = await api<{ path: string }>("/api/upload-profile-image", {
+      method: "POST",
+      body: JSON.stringify({ filename: file.name, dataUrl }),
+    });
+
+    profile.value.portfolio.profile_image_path = result.path;
+    profile.value.portfolio.profile_image_alt ||= profile.value.name;
+
+    await api("/api/profile", {
+      method: "PUT",
+      body: JSON.stringify(profile.value),
+    });
+
+    status.value = `Imagem enviada: ${result.path}\nPerfil salvo em data/profile.json.`;
+  } catch (error) {
+    status.value = `Erro ao enviar imagem: ${error instanceof Error ? error.message : String(error)}`;
+  } finally {
+    input.value = "";
+    isSaving.value = false;
+  }
+}
+
+async function clearProfileImage() {
+  if (!profile.value) return;
+  profile.value.portfolio.profile_image_path = "";
+  status.value = "Imagem removida do perfil. Clique em salvar para persistir.";
+}
+
 async function loadProfile() {
   status.value = "Carregando data/profile.json...";
   profile.value = await api<Profile>("/api/profile");
+  ensureSkillLevels();
   status.value = "Perfil carregado.";
 }
 
@@ -77,6 +197,11 @@ async function runAction(path: string, label: string) {
 
 function addSkill() {
   profile.value?.skills.push({ group: "", items: [] });
+}
+
+function setSkillItems(skill: SkillGroup, value: string) {
+  skill.items = splitComma(value);
+  ensureSkillLevels();
 }
 
 function addExperience() {
@@ -212,8 +337,20 @@ onMounted(() => {
             </div>
             <div class="form-grid two">
               <label>Grupo <input v-model="skill.group" type="text" /></label>
-              <label>Itens <input :value="skill.items.join(', ')" type="text" @input="skill.items = splitComma(($event.target as HTMLInputElement).value)" /></label>
+              <label>Itens <input :value="skill.items.join(', ')" type="text" @change="setSkillItems(skill, ($event.target as HTMLInputElement).value)" /></label>
             </div>
+          </div>
+        </div>
+        <div class="skill-level-editor" v-if="skillLevelRows.length">
+          <div>
+            <h3>Níveis exibidos no portfólio</h3>
+            <p>Esses textos aparecem nos cards de Stacks &amp; Habilidades.</p>
+          </div>
+          <div class="skill-level-grid">
+            <label v-for="row in skillLevelRows" :key="row.key">
+              {{ row.name }}
+              <input v-model="profile.portfolio.skill_levels[row.key]" type="text" placeholder="Ex.: Iniciante, Intermediário, Avançado" />
+            </label>
           </div>
         </div>
       </section>
@@ -238,7 +375,7 @@ onMounted(() => {
               <label>Data <input v-model="item.date" type="text" /></label>
               <label>Local <input v-model="item.location" type="text" /></label>
             </div>
-            <label>Bullets <textarea :value="item.bullets.join('\n')" rows="5" @input="item.bullets = splitLines(($event.target as HTMLTextAreaElement).value)"></textarea></label>
+            <label>Bullets <textarea :value="item.bullets.join('\n')" rows="5" @change="item.bullets = splitLines(($event.target as HTMLTextAreaElement).value)"></textarea></label>
           </div>
         </div>
       </section>
@@ -306,12 +443,12 @@ onMounted(() => {
               <label>Título <input v-model="project.title" type="text" /></label>
               <label>Tipo <input v-model="project.type" type="text" /></label>
               <label>Stack <input v-model="project.stack" type="text" /></label>
-              <label>Tags <input :value="project.tags.join(', ')" type="text" @input="project.tags = splitComma(($event.target as HTMLInputElement).value)" /></label>
+              <label>Tags <input :value="project.tags.join(', ')" type="text" @change="project.tags = splitComma(($event.target as HTMLInputElement).value)" /></label>
               <label>Ícone <input v-model="project.icon" type="text" /></label>
               <label>Classe do ícone <input v-model="project.icon_class" type="text" /></label>
             </div>
             <label>Descrição <textarea v-model="project.description" rows="4"></textarea></label>
-            <label>Links <textarea :value="linkText(project)" rows="4" @input="setLinks(project, ($event.target as HTMLTextAreaElement).value)"></textarea></label>
+            <label>Links <textarea :value="linkText(project)" rows="4" @change="setLinks(project, ($event.target as HTMLTextAreaElement).value)"></textarea></label>
           </div>
         </div>
       </section>
@@ -319,11 +456,23 @@ onMounted(() => {
       <section id="portfolio" class="editor-section">
         <div class="section-label">site</div>
         <h2 class="sec-title">Portfolio</h2>
+        <div class="image-editor">
+          <div class="image-preview">
+            <img v-if="profile.portfolio.profile_image_path" :src="profile.portfolio.profile_image_path" :alt="profile.portfolio.profile_image_alt || profile.name" />
+            <span v-else>{{ profile.portfolio.profile_initials || "IMG" }}</span>
+          </div>
+          <div class="image-controls">
+            <label>Imagem do perfil <input type="file" accept="image/png,image/jpeg,image/webp" @change="uploadProfileImage" /></label>
+            <label>Caminho da imagem <input v-model="profile.portfolio.profile_image_path" type="text" placeholder="/uploads/profile.webp" /></label>
+            <label>Texto alternativo <input v-model="profile.portfolio.profile_image_alt" type="text" /></label>
+            <button type="button" @click="clearProfileImage">Remover imagem</button>
+          </div>
+        </div>
         <div class="form-grid two">
           <label>Usuário terminal <input v-model="profile.portfolio.terminal_user" type="text" /></label>
           <label>Nome no logo <input v-model="profile.portfolio.logo_name" type="text" /></label>
           <label>Comando do hero <input v-model="profile.portfolio.command" type="text" /></label>
-          <label>Foco <input :value="profile.portfolio.focus.join(', ')" type="text" @input="profile.portfolio.focus = splitComma(($event.target as HTMLInputElement).value)" /></label>
+          <label>Foco <input :value="profile.portfolio.focus.join(', ')" type="text" @change="profile.portfolio.focus = splitComma(($event.target as HTMLInputElement).value)" /></label>
           <label>Status <input v-model="profile.portfolio.status" type="text" /></label>
           <label>Iniciais <input v-model="profile.portfolio.profile_initials" type="text" /></label>
           <label>Label do perfil <input v-model="profile.portfolio.profile_label" type="text" /></label>
@@ -332,7 +481,7 @@ onMounted(() => {
           <label>Nome de download <input v-model="profile.portfolio.resume_download_name" type="text" /></label>
           <label>Arquivo PDF gerado <input v-model="profile.portfolio.resume_output_pdf" type="text" /></label>
           <label>Ano <input v-model="profile.portfolio.copyright_year" type="text" /></label>
-          <label>Stack do rodapé <input :value="profile.portfolio.footer_stack.join(', ')" type="text" @input="profile.portfolio.footer_stack = splitComma(($event.target as HTMLInputElement).value)" /></label>
+          <label>Stack do rodapé <input :value="profile.portfolio.footer_stack.join(', ')" type="text" @change="profile.portfolio.footer_stack = splitComma(($event.target as HTMLInputElement).value)" /></label>
         </div>
       </section>
     </form>

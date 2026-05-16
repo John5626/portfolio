@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
+import embeddedProfileData from "../data/profile.json";
 import { editorEnabled } from "./editorAccess";
 import { firstName, loadProfile, profileUrl, toArray, uniqueSkills } from "./profile";
 import type { Profile } from "./types";
@@ -12,13 +13,25 @@ type Drop = {
   color: string;
 };
 
-const profile = ref<Profile | null>(null);
+type VisualMeta = {
+  icon: string;
+  className: string;
+  level: string;
+  logoUrl?: string;
+};
+
+const profile = ref<Profile | null>(import.meta.env.DEV ? null : cloneProfile(embeddedProfileData as Profile));
 const error = ref("");
 const isDark = ref(true);
 const menuOpen = ref(false);
 const canvas = ref<HTMLCanvasElement | null>(null);
+const typedTitleIntro = ref("");
+const typedTitleName = ref("");
 let drops: Drop[] = [];
 let timer = 0;
+let typingTimer = 0;
+
+const mainTitleIntro = "> Olá, eu sou";
 
 const snippets = [
   "<?php", "namespace App", "use Illuminate", "class Controller",
@@ -36,17 +49,31 @@ const snippets = [
   "npm install", "vite", "clean code", "feature", "deploy",
 ];
 
-const skillMeta: Record<string, { icon: string; className: string; level: string }> = {
-  php: { icon: "PHP", className: "php", level: "Intermediário" },
-  laravel: { icon: "Lv", className: "laravel", level: "Intermediário" },
+function cloneProfile(data: Profile): Profile {
+  return JSON.parse(JSON.stringify(data)) as Profile;
+}
+
+function simpleIcon(slug: string) {
+  return `https://cdn.simpleicons.org/${slug}`;
+}
+
+const skillMeta: Record<string, VisualMeta> = {
+  php: { icon: "PHP", className: "php", level: "Intermediário", logoUrl: simpleIcon("php") },
+  laravel: { icon: "Lv", className: "laravel", level: "Intermediário", logoUrl: simpleIcon("laravel") },
   "apis rest": { icon: "API", className: "rest", level: "Iniciante" },
   "api rest": { icon: "API", className: "rest", level: "Iniciante" },
-  mysql: { icon: "My", className: "mysql", level: "Intermediário" },
+  mysql: { icon: "My", className: "mysql", level: "Intermediário", logoUrl: simpleIcon("mysql") },
   sql: { icon: "SQL", className: "sql", level: "Intermediário" },
-  mariadb: { icon: "Md", className: "mariadb", level: "Iniciante" },
-  "vue.js": { icon: "Vue", className: "vue", level: "Iniciante" },
-  "vue.js 3": { icon: "Vue", className: "vue", level: "Iniciante" },
-  git: { icon: "Git", className: "git", level: "Iniciante" },
+  mariadb: { icon: "Md", className: "mariadb", level: "Iniciante", logoUrl: simpleIcon("mariadb") },
+  postgree: { icon: "PG", className: "pg", level: "Conhecimento", logoUrl: simpleIcon("postgresql") },
+  postgresql: { icon: "PG", className: "pg", level: "Conhecimento", logoUrl: simpleIcon("postgresql") },
+  "vue.js": { icon: "Vue", className: "vue", level: "Iniciante", logoUrl: simpleIcon("vuedotjs") },
+  "vue.js 3": { icon: "Vue", className: "vue", level: "Iniciante", logoUrl: simpleIcon("vuedotjs") },
+  tailwind: { icon: "Tw", className: "tailwind", level: "Conhecimento", logoUrl: simpleIcon("tailwindcss") },
+  git: { icon: "Git", className: "git", level: "Iniciante", logoUrl: simpleIcon("git") },
+  github: { icon: "GH", className: "github", level: "Conhecimento", logoUrl: simpleIcon("github") },
+  java: { icon: "Java", className: "java", level: "Conhecimento", logoUrl: simpleIcon("openjdk") },
+  python: { icon: "Py", className: "python", level: "Conhecimento", logoUrl: simpleIcon("python") },
 };
 
 const focus = computed(() => {
@@ -60,9 +87,11 @@ const skills = computed(() => {
   if (!profile.value) return [];
   return uniqueSkills(profile.value).map((skill) => {
     const key = skill.trim().toLowerCase();
+    const meta = skillMeta[key] || { icon: skill.slice(0, 3), className: "rest", level: "Conhecimento" };
     return {
       name: skill,
-      ...(skillMeta[key] || { icon: skill.slice(0, 3), className: "rest", level: "Conhecimento" }),
+      ...meta,
+      level: profile.value?.portfolio.skill_levels?.[key] || meta.level,
     };
   });
 });
@@ -86,27 +115,66 @@ const currentExperience = computed(() => {
   return toArray(profile.value.experience)[0] || null;
 });
 
+const monthIndex: Record<string, number> = {
+  janeiro: 0,
+  fevereiro: 1,
+  marco: 2,
+  abril: 3,
+  maio: 4,
+  junho: 5,
+  julho: 6,
+  agosto: 7,
+  setembro: 8,
+  outubro: 9,
+  novembro: 10,
+  dezembro: 11,
+};
+
+function normalizeDateText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function parseTimelineStartDate(value: string) {
+  const normalized = normalizeDateText(value);
+  const monthMatch = normalized.match(/([a-z]+)\s+de\s+(\d{4})/);
+  if (monthMatch) {
+    return Date.UTC(Number(monthMatch[2]), monthIndex[monthMatch[1]] ?? 0, 1);
+  }
+
+  const yearMatch = normalized.match(/\d{4}/);
+  return yearMatch ? Date.UTC(Number(yearMatch[0]), 0, 1) : 0;
+}
+
 const timeline = computed(() => {
   if (!profile.value) return [];
-  const experiences = toArray(profile.value.experience).map((item) => ({
+  const experiences = toArray(profile.value.experience).map((item, index) => ({
     year: item.date,
     title: `${item.role}${item.company ? ` — ${item.company}` : ""}`,
     desc: toArray(item.bullets).slice(0, 2).join(" "),
+    sortDate: parseTimelineStartDate(item.date),
+    sortIndex: index,
   }));
-  const education = toArray(profile.value.education).map((item) => ({
+  const education = toArray(profile.value.education).map((item, index) => ({
     year: item.date,
     title: item.title,
     desc: item.subtitle,
+    sortDate: parseTimelineStartDate(item.date),
+    sortIndex: experiences.length + index,
   }));
-  return [...experiences, ...education];
+  return [...experiences, ...education]
+    .sort((a, b) => b.sortDate - a.sortDate || a.sortIndex - b.sortIndex)
+    .map(({ sortDate, sortIndex, ...item }) => item);
 });
 
 const contacts = computed(() => {
   if (!profile.value) return [];
   return [
-    { label: "E-mail", icon: "@", url: `mailto:${profile.value.email}` },
-    { label: "GitHub", icon: "⊙", url: profile.value.github_url },
-    { label: "LinkedIn", icon: "in", url: profile.value.linkedin_url },
+    { label: "E-mail", icon: "@", url: `mailto:${profile.value.email}`, logoUrl: simpleIcon("maildotru") },
+    { label: "GitHub", icon: "GH", url: profile.value.github_url, logoUrl: simpleIcon("github") },
+    { label: "LinkedIn", icon: "in", url: profile.value.linkedin_url, logoUrl: simpleIcon("readdotcv") },
     { label: "Lattes", icon: "CV", url: profile.value.website_url },
   ].filter((contact) => contact.url);
 });
@@ -120,6 +188,48 @@ const logoName = computed(() => {
   if (!profile.value) return "portfolio";
   return profile.value.portfolio?.logo_name || firstName(profile.value);
 });
+
+function clearTitleTyping() {
+  if (typingTimer) {
+    window.clearTimeout(typingTimer);
+    typingTimer = 0;
+  }
+}
+
+function startTitleTyping(name: string) {
+  clearTitleTyping();
+  typedTitleIntro.value = "";
+  typedTitleName.value = "";
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    typedTitleIntro.value = mainTitleIntro;
+    typedTitleName.value = name;
+    return;
+  }
+
+  const introChars = Array.from(mainTitleIntro);
+  const nameChars = Array.from(name);
+  const sequence = [...introChars, "\n", ...nameChars];
+  let index = 0;
+
+  const tick = () => {
+    index += 1;
+
+    if (index <= introChars.length) {
+      typedTitleIntro.value = sequence.slice(0, index).join("");
+      typedTitleName.value = "";
+    } else {
+      typedTitleIntro.value = mainTitleIntro;
+      typedTitleName.value = nameChars.slice(0, Math.max(0, index - introChars.length - 1)).join("");
+    }
+
+    if (index < sequence.length) {
+      typingTimer = window.setTimeout(tick, index < introChars.length ? 44 : 58);
+    }
+  };
+
+  typingTimer = window.setTimeout(tick, 240);
+}
 
 function normalizeTheme() {
   document.body.classList.toggle("dark", isDark.value);
@@ -224,18 +334,28 @@ function setupScrollReveal() {
   });
 }
 
+function applyProfileDocumentData(profileData: Profile) {
+  document.title = `${profileData.display_name || profileData.name} | Dev PHP`;
+  document
+    .querySelector('meta[name="description"]')
+    ?.setAttribute("content", `Portfólio de ${profileData.name} — ${profileData.short_title || profileData.title}`);
+}
+
 onMounted(async () => {
   isDark.value = localStorage.getItem("theme") !== "light";
   normalizeTheme();
 
   try {
-    profile.value = await loadProfile();
-    document.title = `${profile.value.display_name || profile.value.name} | Dev PHP`;
-    document
-      .querySelector('meta[name="description"]')
-      ?.setAttribute("content", `Portfólio de ${profile.value.name} — ${profile.value.short_title || profile.value.title}`);
-    await nextTick();
-    setupScrollReveal();
+    if (import.meta.env.DEV) {
+      profile.value = await loadProfile();
+    }
+
+    if (profile.value) {
+      applyProfileDocumentData(profile.value);
+      startTitleTyping(profile.value.display_name || profile.value.name);
+      await nextTick();
+      setupScrollReveal();
+    }
   } catch (err) {
     error.value = err instanceof Error ? err.message : String(err);
   }
@@ -248,6 +368,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.clearInterval(timer);
+  clearTitleTyping();
   window.removeEventListener("resize", initMatrix);
   window.removeEventListener("scroll", onScroll);
 });
@@ -296,9 +417,9 @@ onUnmounted(() => {
           <div class="prompt-line">
             <span class="user">{{ terminalUser }}@dev</span>:~$&nbsp;<span class="cmd">{{ profile.portfolio.command }}</span>
           </div>
-          <h1 class="main-title">
-            &gt; Olá, eu sou<br />
-            <span class="name-highlight">{{ profile.display_name || profile.name }}</span><span class="cursor"></span>
+          <h1 class="main-title" :aria-label="`${mainTitleIntro} ${profile.display_name || profile.name}`">
+            <span>{{ typedTitleIntro }}</span><br v-if="typedTitleIntro === mainTitleIntro || typedTitleName" />
+            <span class="name-highlight">{{ typedTitleName }}</span><span class="cursor"></span>
           </h1>
           <p class="subtitle">
             <span class="kw">const</span> role = <span class="str">"{{ profile.short_title || profile.title }}"</span><br />
@@ -339,13 +460,12 @@ onUnmounted(() => {
                 <span class="str">"{{ item }}"</span><span v-if="index < focus.length - 1">, </span>
               </template>
               ],</p>
-            <p><span class="line-no">05</span>&nbsp;&nbsp;project: <span class="str">"{{ featuredProject?.title || 'Portfolio' }}"</span>,</p>
             <p><span class="line-no">06</span>&nbsp;&nbsp;status: <span class="fn">ready</span></p>
             <p><span class="line-no">07</span>&#125;</p>
           </div>
           <div class="console-footer">
             <span>build passed</span>
-            <span>{{ currentExperience?.company || profile.location }}</span>
+            <span>{{ profile.location }}</span>
           </div>
         </aside>
       </template>
@@ -387,10 +507,16 @@ onUnmounted(() => {
             </p>
             <p class="bio-text">{{ profile.summary }}</p>
           </div>
-          <div>
+          <div class="profile-aside">
             <div class="profile-frame">
               <div class="profile-scan"></div>
-              <div class="profile-initials">{{ profile.portfolio.profile_initials }}</div>
+              <img
+                v-if="profile.portfolio.profile_image_path"
+                :src="profile.portfolio.profile_image_path"
+                :alt="profile.portfolio.profile_image_alt || profile.name"
+                class="profile-photo"
+              />
+              <div v-else class="profile-initials">{{ profile.portfolio.profile_initials }}</div>
             </div>
             <div class="profile-label">{{ profile.portfolio.profile_label }}</div>
           </div>
@@ -404,7 +530,10 @@ onUnmounted(() => {
         <h2 class="sec-title">Stacks &amp; Habilidades</h2>
         <div class="stack-grid">
           <div class="stack-card" v-for="skill in skills" :key="skill.name">
-            <div class="stack-icon" :class="skill.className">{{ skill.icon }}</div>
+            <div class="stack-icon" :class="skill.className">
+              <span v-if="skill.logoUrl" class="brand-logo" :style="`--brand-logo: url(${skill.logoUrl})`" aria-hidden="true"></span>
+              <span v-else>{{ skill.icon }}</span>
+            </div>
             <div class="stack-name">{{ skill.name }}</div>
             <div class="stack-tag">{{ skill.level }}</div>
           </div>
@@ -456,7 +585,10 @@ onUnmounted(() => {
         <p class="contact-sub"><span class="accent2">&gt;</span> Disponível para oportunidades e colaborações.</p>
         <div class="contact-grid">
           <a v-for="contact in contacts" :key="contact.label" :href="contact.url" :target="contact.url.startsWith('mailto:') ? undefined : '_blank'" rel="noopener" class="contact-link">
-            <span class="contact-icon">{{ contact.icon }}</span>
+            <span class="contact-icon">
+              <span v-if="contact.logoUrl" class="brand-logo" :style="`--brand-logo: url(${contact.logoUrl})`" aria-hidden="true"></span>
+              <span v-else>{{ contact.icon }}</span>
+            </span>
             <span>{{ contact.label }}</span>
           </a>
         </div>
@@ -467,6 +599,6 @@ onUnmounted(() => {
   <footer v-if="profile">
     <span class="footer-user">{{ terminalUser }}@dev</span>:~$
     <span class="footer-comment">// made with {{ profile.portfolio.footer_stack.join(" + ") }} + &lt;3</span>
-    <div class="footer-copy">© {{ profile.portfolio.copyright_year }} {{ profile.name }}</div>
+    <div class="footer-copy">{{ profile.portfolio.copyright_year }} {{ profile.name }}</div>
   </footer>
 </template>

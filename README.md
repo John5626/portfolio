@@ -131,3 +131,5 @@ Quando habilitado localmente, o editor salva em `data/profile.json` usando a API
 
 - `Gerar HTML`: recria `dist/cv.html`;
 - `Gerar PDF`: recria `dist/curriculo_JSOUZA.pdf` e atualiza `public/dist/curriculo_JSOUZA.pdf`.
+
+O upload de imagem do perfil salva arquivos em `public/uploads/` e grava o caminho no `data/profile.json`. Essa pasta é copiada automaticamente para `dist/site/` no build, então a imagem também fica disponível no deploy estático.
