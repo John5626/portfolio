@@ -50,14 +50,15 @@ Validar TypeScript:
 npm run typecheck
 ```
 
-Gerar site Vue e HTML ATS:
+Gerar site Vue, HTML ATS e PDF:
 
 ```bash
 npm run build
 ```
 
 O build de produção gera o portfólio público em `dist/site/` sem a página `admin.html` e sem o link `editar`.
-Também copia para `dist/site/` os dados públicos em `data/profile.json`, o currículo HTML em `dist/cv.html` e, se existir, o PDF em `dist/curriculo_JSOUZA.pdf`.
+Também copia para `dist/site/` os dados públicos em `data/profile.json`, o currículo HTML em `dist/cv.html` e o PDF em `dist/curriculo_JSOUZA.pdf`.
+Se o PDF não for gerado, o build falha em vez de publicar o site sem o arquivo de download.
 
 Gerar o PDF:
 

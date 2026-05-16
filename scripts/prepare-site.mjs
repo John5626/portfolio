@@ -7,12 +7,11 @@ const siteDir = path.join(root, "dist", "site");
 const profileSource = path.join(root, "data", "profile.json");
 const profileTarget = path.join(siteDir, "data", "profile.json");
 
-async function copyIfExists(source, target, label) {
+async function copyRequired(source, target, label) {
   try {
     await fs.access(source);
   } catch {
-    console.warn(`Aviso: ${label} não encontrado em ${path.relative(root, source)}`);
-    return;
+    throw new Error(`${label} não encontrado em ${path.relative(root, source)}`);
   }
 
   await fs.mkdir(path.dirname(target), { recursive: true });
@@ -23,6 +22,6 @@ async function copyIfExists(source, target, label) {
 const profile = JSON.parse(await fs.readFile(profileSource, "utf8"));
 const pdfName = profile.portfolio?.resume_output_pdf || path.basename(profile.portfolio?.resume_pdf_path || "curriculo.pdf");
 
-await copyIfExists(profileSource, profileTarget, "profile.json");
-await copyIfExists(path.join(root, "dist", "cv.html"), path.join(siteDir, "dist", "cv.html"), "cv.html");
-await copyIfExists(path.join(root, "dist", pdfName), path.join(siteDir, "dist", pdfName), pdfName);
+await copyRequired(profileSource, profileTarget, "profile.json");
+await copyRequired(path.join(root, "dist", "cv.html"), path.join(siteDir, "dist", "cv.html"), "cv.html");
+await copyRequired(path.join(root, "dist", pdfName), path.join(siteDir, "dist", pdfName), pdfName);

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "api": "node scripts/dev-server.mjs",
-    "build": "vite build && npm run build:cv && node scripts/prepare-site.mjs",
+    "build": "vite build && npm run build:cv && npm run pdf && node scripts/prepare-site.mjs",
     "build:cv": "node scripts/render.mjs",
     "pdf": "node scripts/export-pdf.mjs",
     "typecheck": "tsc --noEmit"
