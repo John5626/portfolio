@@ -389,9 +389,13 @@ onUnmounted(() => {
     <div class="header-actions">
       <button class="theme-btn" type="button" @click="toggleTheme">
         <span class="theme-dot"></span>
-        {{ isDark ? "light" : "dark" }}
+        <span class="theme-label">{{ isDark ? "light" : "dark" }}</span>
       </button>
-      <button class="hamburger" type="button" @click="menuOpen = !menuOpen">☰</button>
+      <button class="hamburger" type="button" aria-label="Abrir menu" @click="menuOpen = !menuOpen">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
     </div>
   </header>
 
